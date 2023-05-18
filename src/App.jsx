@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import TodoForm from "./components/TodoForm"
 import TodoList from "./components/TodoList"
 
@@ -20,12 +20,22 @@ const initialsTodos = [
 
 ];
 
+const localTodos = JSON.parse(localStorage.getItem('todos'))
+
 function App() {
   
-  const [todos, setTodos] = useState(initialsTodos);
+  const [todos, setTodos] = useState(localTodos || initialsTodos);
   const [todoEdit, setTodoEdit] = useState(null);
 
+  useEffect(() => {
+  
+    localStorage.setItem('todos', JSON.stringify(todos));
+  }, [todos]);
+
   const todoDelete = (todoId) => {
+    if(todoEdit && todoId === todoEdit.id) {
+      setTodoEdit(null);
+    }
     const changeTodo = todos.filter(todo => todo.id !== todoId);
     setTodos(changeTodo);
   }
@@ -54,6 +64,15 @@ function App() {
     setTodos(changeTodos);
   }
 
+  const todoUpdate = (todoEdit) =>{
+    const changetodos= todos.map(todo =>(
+      todo.id === todoEdit.id
+      ? todoEdit 
+      : todo
+      ))
+      setTodos(changetodos);
+  }
+
   return (
     <div className="container mt-4">
       <div className="row">
@@ -66,7 +85,12 @@ function App() {
            />
         </div>
         <div className="col-4">
-          <TodoForm todoAdd={todoAdd}/>
+          <TodoForm 
+          todoEdit={todoEdit} 
+          todoAdd={todoAdd} 
+          todoUpdate={todoUpdate}
+          setTodoEdit={setTodoEdit}
+          />
         </div>
 
       </div>

@@ -12,9 +12,17 @@ const TodoList = ({ todos, todoDelete, toogleTodoComplete, setTodoEdit }) => {
 
   return (
     <div>
-        <h1 className="text-end">TodoList</h1>
-        {
-            todos.map((todo) =>(
+        <h2 className="text-center display-4">Lista de Tareas</h2>
+        { 
+          todos.length === 0 
+          ?(
+              <div className="alert alert-primary text-end">
+                    No hay tareas Pendientes
+              </div>
+            )
+
+          :(
+              todos.map((todo) =>(
                 <Todo 
                 todo={todo}
                 completed={todo.completed}
@@ -24,11 +32,14 @@ const TodoList = ({ todos, todoDelete, toogleTodoComplete, setTodoEdit }) => {
                 setTodoEdit={setTodoEdit}
               
                 />
-            ))
+          )))
+            
+            
+            
             
         }
         
-       
+        
     </div>
   )
 }

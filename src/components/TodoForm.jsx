@@ -1,15 +1,27 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
 const initialsValues = {
   title:"",
   description:""
 }
 
-const TodoForm = ({todoAdd}) => {
+const TodoForm = ({todoAdd, todoEdit, todoUpdate, setTodoEdit}) => {
+
 const [values, setValues] = useState(initialsValues);
 const {title, description} = values;
 const [error, setError] = useState(null);
 const [succesMessage, setSuccesMessage] = useState(null);
+
+useEffect(() => {
+  if(todoEdit)
+  {
+    setValues(todoEdit)
+  }else
+  {
+    setValues(initialsValues);
+  }
+  
+}, [todoEdit]);
 
 const handleInputChange = (event) => {
  const changeValues={
@@ -31,16 +43,37 @@ const handleSubmit = (event) => {
     return;
   }
   // agregar la tarea
+  if(todoEdit){
+    todoUpdate(values)
+    setSuccesMessage("Tarea actualizada con Éxito...");
+  }else{
   todoAdd(values);
-  setSuccesMessage("Tarea agregada con Éxito...")
+  setSuccesMessage("Tarea agregada con Éxito...");
   setValues(initialsValues);
+  }
+ 
+  
   setTimeout(() => {
     setSuccesMessage(null);
   }, 1500);
+
+  setError(null);
 }
+
+
   return (
     <div>
-    <h1>Nueva Tarea</h1>
+    <h2 className="text-center display-5">{todoEdit ? "Editar tarea":"Nueva Tarea"}</h2>
+    {
+      todoEdit && 
+          <button
+              onClick={() => setTodoEdit(null)}
+              className="btn btn-sm btn-warning mb-2"
+              > Cancelar Edición
+          </button>
+              
+    }
+   
     <form onSubmit={handleSubmit}>
       <input type="text" 
             placeholder="Titulo" 
@@ -60,7 +93,7 @@ const handleSubmit = (event) => {
       <button 
               className="btn btn-primary mt-2 w-100"
               > 
-              Agregar Tarea
+              {todoEdit ? "Actualizar Tarea" : "Agregar Tarea"}
       </button>
      </form>
       {
